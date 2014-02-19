@@ -72,9 +72,9 @@ class Model(object):
                 table = foreign_key.column.table.name
                 with app.app_context():
                     endpoint = current_app.class_references[table]
-                links.append({'rel': endpoint.__name__, 'uri': '/{}/{}'.format(
-                    endpoint, column_value)})
-        links.append({'rel': 'self', 'uri': self.resource_uri()})
+                links.append(_link(endpoint.__name__, '/{}/{}'.format(
+                    endpoint, column_value)))
+        links.append(_link('self', self.resource_uri()))
         return links
 
     @classmethod
@@ -132,6 +132,9 @@ class Model(object):
 
     def __str__(self):
         return str(getattr(self, self.primary_key()))
+        
+    def _link(rel, uri):
+        return { 'rel': rel, 'uri': uri }
 
 class AdminModelViewWithPK(ModelView):
     """Mixin admin view class that displays primary keys on the admin form"""
